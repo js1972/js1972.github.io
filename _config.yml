@@ -1,11 +1,11 @@
 # Site settings
-title: Andrej Karpathy blog
-email: 
-description: "Musings of a Computer Scientist."
+title: Jason Scott blog
+email:
+description: "Ramblings in SAP technology and other stuff..."
 baseurl: ""
-url: "http://karpathy.github.io"
-twitter_username: karpathy
-github_username:  karpathy
+url: "http://js1972.github.io"
+twitter_username: js1972
+github_username: js1972
 
 # Build settings
 markdown: kramdown

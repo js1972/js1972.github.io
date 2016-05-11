@@ -1,4 +1,3 @@
 # My blog
 
-This is my blog, uses [Jekyll](http://jekyllrb.com/). I was tired of bloated, slow Wordpress that locked up all my content.
-
+This is my blog, using [Jekyll](http://jekyllrb.com/). I was tired of other online blog engines and wanted to keep all my context in markdown on GitHub.
