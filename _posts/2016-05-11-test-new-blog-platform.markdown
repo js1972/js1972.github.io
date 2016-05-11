@@ -11,4 +11,4 @@ First post with the Jekyll blog system which uses plain old markdown files. The 
 
 Any pictures or linked files are stored in the assets folder.
 
-Note I have some sample blogs already in here - these were not written by me but are just some dummy entries while I get this setup properly.
+Note I have some sample blogs already in here - these were not written by me but are just some dummy entries for testing.
