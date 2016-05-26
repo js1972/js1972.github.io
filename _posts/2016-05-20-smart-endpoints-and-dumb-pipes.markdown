@@ -7,6 +7,8 @@ date:   2014-09-10 09:00:00
 mathjax: false
 ---
 
+<img src="/assets/smart-endpoints/sap_integration.png">
+
 I've been working in the integration space with SAP products for many years now. In that time there’s always been the thirst for best practices not just from the SAP ecosystem but the wider software industry.
 One of the more pervasive thoughts is __“smart end-points & dumb pipes”__. This is the notion that its your business systems that should be smart and not your interfaces. Its seen as an anti-pattern to load up your interface with complex business rules and decision making processes — effectively building another business application that will require never-ending support. Before you know it, you have a huge integration team looking after XI (_I like the sound of XI better than PI/PO -> SAP, please change it back!_).
 
