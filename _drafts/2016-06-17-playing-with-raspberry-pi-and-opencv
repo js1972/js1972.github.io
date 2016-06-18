@@ -123,6 +123,12 @@ The build time was approx. 3 hours for me.
 
 ## X Server for viewing application windows
 
+# Home surveillance system
+To build your own home surveillance system with the Pi you can install the great `motion` program which runs just fine on the Pi.
+
+Unlike all the blogs posts out there however, you need to activate a kernel module in Raspbian so that the Pi camera is treated like a USB camera. Then it will work flawlessly wiht the Pi.
+
+
 ## Camera wrapper class
 OpenCV works with USB webcams. This includes when running it on the Raspberry Pi. However, the Pi Camera is *not* a USB webcam.
 
