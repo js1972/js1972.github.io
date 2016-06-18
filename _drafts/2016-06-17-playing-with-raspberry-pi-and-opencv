@@ -101,7 +101,7 @@ kill -9 <process id>	# Kill a running process where <process id> can be determin
 
 If you are using a terminal such as Cathode or Prompt on the iPad you will want to install **[screen](https://www.gnu.org/software/screen/manual/screen.html)** on the Pi. Without it your ssh session will terminate often (whenever you iPad sleeps or the app is in background for too long). This is a real pain as any running command (like an install) will terminate.
 
-Installing screen is as simlpe as:
+Installing screen is as simple as:
 ```
 sudo apt-get install screen
 ```
@@ -122,3 +122,13 @@ When building from source **do not** use the `make -j4` option (which uses all 4
 The build time was approx. 3 hours for me.
 
 ## X Server for viewing application windows
+
+## Camera wrapper class
+OpenCV works with USB webcams. This includes when running it on the Raspberry Pi. However, the Pi Camera is *not* a USB webcam.
+
+A set of [image processing utilities](https://github.com/jrosebr1/imutils) is available that provides a nice wrapper class which can be used in your OpenCV code without worrying which camera you are using.
+
+See this pyimagesearch.com blog post for an example on how to use this camera wrapper class: [imutils wraper class for camera](http://www.pyimagesearch.com/2016/01/04/unifying-picamera-and-cv2-videocapture-into-a-single-class-with-opencv/)
+
+# Image Analysis
+Install OpenCV on your laptop (a Mac in my case) first as its much easier to play with the code that way. Then when you have some working code you want to test on the Pi, `scp` it across and give it a go...
