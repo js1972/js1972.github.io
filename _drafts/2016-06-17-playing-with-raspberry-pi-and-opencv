@@ -52,7 +52,9 @@ So with `sudo raspi-config` open we need to perform the following tasks:
 + Set logon on boot (I set it to ask for username and password on boot - this is not necessary but I just liked it.)
 + Enable SSH.
 
+<hr>
 By default the Pi's username is `pi` and password is `raspberry`.
+<hr>
 
 # SSH and a Static IP
 We don't want to always be chained to a TV with the HDMI cable and have a keyboard plugged into our Pi so typically we will SSH into it. To make this more pleasant though, lets setup a static IP address for the Pi, otherwise we will have to stuff around with figuring out its IP address every time we turn it on.
@@ -89,6 +91,13 @@ You can use `ifconfig` and `netstat -nr` to obtain some of these values.
 
 You should now be able to log into your pi via the static IP.
 
+Lets give it a go:
+```
+ssh pi@192.168.1.99
+```
+
+Bingo!
+
 # Useful commands
 A few useful commands before we go on:
 ```
@@ -115,13 +124,28 @@ To reconnect to a screen terminal use `screen -r` (if you only have one) or `scr
 
 To end a terminal instance use `Ctrol+D` from within the instance.
 
-# Install OpenCV so we can play with the Pi camera
+# Install OpenCV 3 so we can play with the Pi camera
 This will require compiling OpenCV source on the Pi and will require a minimum of around 4GB of space.
 
 When building from source **do not** use the `make -j4` option (which uses all 4 cores) as it failed every time for me. Instead just use `make` which may be a bit slower - **but it works**.
 The build time was approx. 3 hours for me.
 
 ## X Server for viewing application windows
+If you wish to view any graphical applications that are running on the Pi, but you typically run the Pi in headless mode (no screen connected) then you can make use of X Windows.
+
+SSH will allow you to connect with X-forwarding enabled. If your laptop us running linux it probably has an X server running by default. If however, you are on Windows or Mac OSX (like I am) then you need to install one.
+
+For Windows I've read that there are a few options you can choose from but as I don't use Windoze - you're on your own.
+For OSX there is [XQuartz](https://www.xquartz.org/). Previously OS came with an X11 server but Apple decided to drop it and spun it off into an open source project.
+Just download the DMG from https://www.xquartz.org/ and install it. If you then connect to the Pi via SSH with X-forwarding enabled your apps windows will magically start appearing on your laptop.
+
+[*Note that X11 work with the keyboard and mouse as well, not just the screen. Also - slightly confusing - the X Server runs on the device that has the physical screen and keyboard.*]
+
+Connect via SSH with X-forwarding:
+```
+ssh -X pi@192.168.1.99
+```
+ TODO - Add some pics here!!!
 
 # Home surveillance system
 To build your own home surveillance system with the Pi you can install the great `motion` program which runs just fine on the Pi.
@@ -138,3 +162,33 @@ See this pyimagesearch.com blog post for an example on how to use this camera wr
 
 # Image Analysis
 Install OpenCV on your laptop (a Mac in my case) first as its much easier to play with the code that way. Then when you have some working code you want to test on the Pi, `scp` it across and give it a go...
+
+## Install OpenCV3 with Python3 bindings on MAC OSX
+To install OpenCV3 on your mac is not as simple as most other online tutorials make out. I tried building from source as we did with the Pi above but couldn't get it to work - probably because I'm using the Anaconda package manager for python. I kept getting errors around HDF5 at various stages. I eventually got it to compile fine but when I `import cv2` into python it couldn't find the hp5f related libraries. I'm just not interested in sort that sort of nonsense out when you can use `conda`!
+
+### Anaconda
+If you are using Anaconda (or miniconda) - which I highly recommend - then you can install OpenCV3 with the following command:
+```
+conda install -c menpo opencv3=3.1.0
+```
+The menpo project on anaconda have allot Machine Learning and Computer Vision related libraries.
+So if you can find the library you're looking for with `conda search opencv3` for example then search over at anacond.org (Ensure that the library is available for linux or OSX depending on where you're working).
+
+Anaconda keeps your python environments separate from the system environment, just like virtualenv does, but I think its a little friendlier to use.
+
+### Docker
+Now - even though I've gone on about installing OpenCV on my Mac above, it was mainly a learning exercise. I actually think its better to use docker containers where you can spin up different environment willy-nilly.
+Check out the docker images at
++ https://github.com/Kaixhin/dockerfiles
++ https://github.com/jupyter/docker-stacks
+
+These are both great repositories of docker files (they auto build onto docker hub as well).
+
+The Kaixhin docker files are more aimed at machine learning tasks. The [Jupyter](http://jupyter.org/) docker files are more aimed at general purpose scientific python and include a running Jupyter server. Jupyter notebooks if you haven't seen them are a beautiful mesh of Python and web pages - you effectively code in a notebook which can easily be shared. Almost like a presentation.
+
+![Jupyter notebook](/assets/pi/jupyterpreview.png "Jupyter Notebook")
+
+### To Do
+I intend to use these as a base for building my own soon...!?!@#$
+
+I like the way Jupyter setup there docker files and they take care of some issues relating to user access, but I also am more used to using Ubuntu instead of Debian; so I might transfer their docker file onto Ubuntu then install OpenCV (via anaconda as I did above but the linux variant) and BAM! We have a nice docker image to play with OpenCV3.
