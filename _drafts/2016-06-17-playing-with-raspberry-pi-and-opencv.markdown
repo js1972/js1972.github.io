@@ -16,7 +16,7 @@ When you unbox your new toy (Raspberry Pi 3 in this case) you should find you ha
 + Old-fashioned USB Keyboard
 + A TV (with HDMI input)
 
-When I bought my Pi it came with [Noobs](https://www.raspberrypi.org/blog/introducing-noobs/) pre-installed on the SD card - or so the documentation said! However once I connected the HDMI cable to the TV and plugged the USB keyboard into the Pi, then finally "powered up" - **I just got a bricked rainbow screen**.
+When I bought my Pi it came with [Noobs](https://www.raspberrypi.org/blog/introducing-noobs/) pre-installed on the SD card - or so the documentation said! However once I connected the HDMI cable to the TV and plugged the USB keyboard into the Pi, then finally "powered up" - **I just got a coloured rainbow screen. My Pi was just a brick!**.
 
 A quick google search will show that this *unfortunately* is quite common (wtf) so I then manually downloaded [NOOBS](https://www.raspberrypi.org/downloads/) from the Raspberry PI downloads site. Followed the instructions to wipe my SD card and put the new NOOBS version on. Powered up! This time voila! I see the NOOBS setup screen.
 
@@ -46,8 +46,8 @@ sudo raspi-config
 ```
 
 So with `sudo raspi-config` open we need to perform the following tasks:
-+ Extend the size of the memory card (by default Raspbian can't see the whole card to extend is to max.)
-+ Set Terminal on boot (we don't want the GUI to launch each time we boot)
++ Extend the size of the memory card (by default Raspbian can't see the whole card so extend it to max.)
++ Set Terminal on boot (I don't want the GUI to launch each time we boot)
 + Enable the Pi Camera module.
 + Set logon on boot (I set it to ask for username and password on boot - this is not necessary but I just liked it.)
 + Enable SSH.
@@ -60,6 +60,8 @@ By default the Pi's username is `pi` and password is `raspberry`.
 We don't want to always be chained to a TV with the HDMI cable and have a keyboard plugged into our Pi so typically we will SSH into it. To make this more pleasant though, lets setup a static IP address for the Pi, otherwise we will have to stuff around with figuring out its IP address every time we turn it on.
 Now there is *the old way* and there is the *new way* to do this...
 
+The old way involved editing the /etc/network/interfaces file. Most blog posts that I've seen all tell you to do it this way (such as [this](www.modmypi.com/blog/tutorial-how-to-give-your-raspberry-pi-a-static-ip-address) one); but according to the raspberry pi forums there is *[the new way](http://raspberrypi.stackexchange.com/questions/37920/how-do-i-set-up-networking-wifi-static-ip)* which I've highlighted below...
+
 ## First we need to enable WiFi
 You can run
 ```
@@ -71,7 +73,7 @@ sudo iwlist wlan0 scan
 Now edit the wpa-supplicant file with `sudo nano /etc/wpa_supplicant/wpa_suplicant.conf` and add the following at the bottom:
 ```
 network={
-	ssid="Your Wifi ESSID whcih can be seen in the iwlist command"
+	ssid="Your Wifi ESSID which can be seen in the iwlist command"
 	psk="Your wifi password"
 }
 ```
@@ -124,6 +126,75 @@ To reconnect to a screen terminal use `screen -r` (if you only have one) or `scr
 
 To end a terminal instance use `Ctrol+D` from within the instance.
 
+# Home surveillance system
+## Motion
+To build your own home surveillance system with the Pi you can install the great `motion` program which runs just fine on the Pi.
+
+[Motion](http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome) is an application for linux systems that can use a USB camera feed to detect motion and trigger specific actions - such as saving a photo or video clip.
+
+### Kernel module for Raspberry Pi camera
+Motion runs great on the Pi, but unlike what all the blogs posts out there recommend; you need to activate a kernel module (VL42) in Raspbian so that the Pi camera is treated like a USB camera. Then it will work flawlessly with the Pi.
+
+Edit the `etc/modules` file to enable the module as follows:
+```
+sudo nano /etc/modules
+```
+This file controls what kernel modules are loaded on boot. Scroll to the bottom of the file and add the following:
+```
+bcm2835_v4l2
+```
+Save the file and exit.
+
+Now `sudo reboot`
+
+After the Pi starts again connect via SSH and run the following command to check the module loaded successfully:
+```
+ls -l /dev/video*
+```
+If you don't see the `/dev/video0` source listed you can run the `lsmod` command to list all the active kernel modules and check if the `bcm2835_v4l2` module is loaded. If not you can attempt to manually load the module by running `sudo modprobe bcm2835_v4l2`. If all else fails you can check the kernel log by running `dmesg` to see if there are any relevant error messages. Other than that you'll have to try Google.
+
+### Install
+To install motion on the PI simply run:
+```
+sudo apt-get update
+sudo apt-get install -y motion
+```
+
+Fix issue with ownership of location where motion stores images:
+```
+sudo mkdir /var/lib/motion
+sudo chown motion:motion /var/lib/motion
+```
+
+Motion is not installed. We just need to *configure* it to do what we want now...
+
+### Configure
+To configure motion you simply edit the motion.conf file.
+```
+sudo nano /etc/motion/motion.conf
+```
+
+Most options you'll want to leave as default, but a few that I changed we as follows:
++ width 1280
++ height 720
++ threshold 3000
++ minimum_motion_frames 2
++ ffmpeg_output_movies off (I turned this off as I just wanted to capture jpeg stills)
++ stream_localhost off (**Make sure to turn this OFF else you won't be able to see a video stream in your laptops browser**)
++ on_picture_save => Set this to a script you wish to run on saving a picture - it is disabled by default.
+
+*Check the [motion](http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome) website for a list of all available options*
+
+I added a script to the *on_picture_save* config to save all the jpegs to Dropbox. On a *motion* event you can have it run any script... to literally do anything. Send email, SMS, etc.
+
+### Setup motion as a service
+Motions can be setup as a service so that its always on and stats on boot.
+
+TBA - add some info on this!!!
+
+## Roll your own motion detection
+As motion is a *black box* and we'd really like to play with our own motion detection code and some machine learning techniques to see if we can do *better* than motion, next we'll install the OpenCV library and write some of our own code...
+
 # Install OpenCV 3 so we can play with the Pi camera
 This will require compiling OpenCV source on the Pi and will require a minimum of around 4GB of space.
 
@@ -147,18 +218,17 @@ ssh -X pi@192.168.1.99
 ```
  TODO - Add some pics here!!!
 
-# Home surveillance system
-To build your own home surveillance system with the Pi you can install the great `motion` program which runs just fine on the Pi.
-
-Unlike all the blogs posts out there however, you need to activate a kernel module in Raspbian so that the Pi camera is treated like a USB camera. Then it will work flawlessly wiht the Pi.
-
-
-## Camera wrapper class
+### Camera wrapper class
 OpenCV works with USB webcams. This includes when running it on the Raspberry Pi. However, the Pi Camera is *not* a USB webcam.
 
 A set of [image processing utilities](https://github.com/jrosebr1/imutils) is available that provides a nice wrapper class which can be used in your OpenCV code without worrying which camera you are using.
 
 See this pyimagesearch.com blog post for an example on how to use this camera wrapper class: [imutils wraper class for camera](http://www.pyimagesearch.com/2016/01/04/unifying-picamera-and-cv2-videocapture-into-a-single-class-with-opencv/)
+
+
+<hr>
+TODO - MOVE THIS TO SEPARATE BLOC !!!!
+THE ABOVE IS ALL RASPBERRY PI
 
 # Image Analysis
 Install OpenCV on your laptop (a Mac in my case) first as its much easier to play with the code that way. Then when you have some working code you want to test on the Pi, `scp` it across and give it a go...
