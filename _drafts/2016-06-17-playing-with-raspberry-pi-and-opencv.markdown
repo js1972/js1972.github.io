@@ -214,6 +214,8 @@ This will require compiling OpenCV source on the Pi and will require a minimum o
 When building from source **do not** use the `make -j4` option (which uses all 4 cores) as it failed every time for me. Instead just use `make` which may be a bit slower - **but it works**.
 The build time was approx. 3 hours for me.
 
+I followed the *always excellent* pyimagesearch blog post: http://www.pyimagesearch.com/2016/04/18/install-guide-raspberry-pi-3-raspbian-jessie-opencv-3/ for the installation, with slight changes where necessary (such as when calling `make` as I mentioned above). It sets up the initial dependency requirements. Ensure to use virtualenv.
+
 ## X Server for viewing application windows
 If you wish to view any graphical applications that are running on the Pi, but you typically run the Pi in headless mode (no screen connected) then you can make use of X Windows.
 
