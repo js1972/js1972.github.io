@@ -131,6 +131,7 @@ To end a terminal instance use `Ctrol+D` from within the instance.
 To build your own home surveillance system with the Pi you can install the great `motion` program which runs just fine on the Pi.
 
 [Motion](http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome) is an application for linux systems that can use a USB camera feed to detect motion and trigger specific actions - such as saving a photo or video clip.
+Most of the details below came from this blog post: https://learn.adafruit.com/cloud-cam-connected-raspberry-pi-security-camera/dropbox-sync#motion-setup.
 
 ### Kernel module for Raspberry Pi camera
 Motion runs great on the Pi, but unlike what all the blogs posts out there recommend; you need to activate a kernel module (VL42) in Raspbian so that the Pi camera is treated like a USB camera. Then it will work flawlessly with the Pi.
@@ -185,12 +186,24 @@ Most options you'll want to leave as default, but a few that I changed we as fol
 
 *Check the [motion](http://www.lavrsen.dk/foswiki/bin/view/Motion/WebHome) website for a list of all available options*
 
+**Note that by default motion stores pictures/videos in here: /var/lib/motion.**
+
 I added a script to the *on_picture_save* config to save all the jpegs to Dropbox. On a *motion* event you can have it run any script... to literally do anything. Send email, SMS, etc.
 
 ### Setup motion as a service
-Motions can be setup as a service so that its always on and stats on boot.
+Motions can be setup as a service so that its always on and starts on boot. To enable this we need to edit the `/etc/default/motion`:
+```
+sudo nano /etc/default/motion
+```
+In here you can set yes or no to enable motion as a daemon. If enabled you can use the following to control the motion service:
+```
+sudo service motion stop
+sudo service motion restart
+sudo service motion start
+```
+Note: With motion configured as a daemon it will auto-start on Pi boot.
 
-TBA - add some info on this!!!
+With the config we did above you can see a live stream from your camera by pointing your browser to the Raspberry Pi's IP address and port 8081: `192.168.1.99:8081`
 
 ## Roll your own motion detection
 As motion is a *black box* and we'd really like to play with our own motion detection code and some machine learning techniques to see if we can do *better* than motion, next we'll install the OpenCV library and write some of our own code...
