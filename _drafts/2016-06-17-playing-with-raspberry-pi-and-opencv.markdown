@@ -231,47 +231,15 @@ ssh -X pi@192.168.1.99
 ```
  TODO - Add some pics here!!!
 
-### Camera wrapper class
+## Accessing the pi camera
 OpenCV works with USB webcams. This includes when running it on the Raspberry Pi. However, the Pi Camera is *not* a USB webcam.
 
-A set of [image processing utilities](https://github.com/jrosebr1/imutils) is available that provides a nice wrapper class which can be used in your OpenCV code without worrying which camera you are using.
+We looked at one way to cater for this when using motion, and that was to install a kernel extension that enables the Pi camera to be treated as a USB camera. In general however if we are writing our own code with OpenCV we don't need the kernel extension as there is a great python module available called picamera. picamera is nice because it gives you complete control of the camera and its settings.
+
+Even better... There is a set of [image processing utilities](https://github.com/jrosebr1/imutils) available that provides a nice wrapper class which can be used in your OpenCV code without worrying which camera you are using (whether it be the Pi camera or a USB camera - of for that matter the camera on your laptop).
+If we use this wrapper our code can work regardless of the camera type.
 
 See this pyimagesearch.com blog post for an example on how to use this camera wrapper class: [imutils wraper class for camera](http://www.pyimagesearch.com/2016/01/04/unifying-picamera-and-cv2-videocapture-into-a-single-class-with-opencv/)
 
-
-<hr>
-TODO - MOVE THIS TO SEPARATE BLOC !!!!
-THE ABOVE IS ALL RASPBERRY PI
-
-# Image Analysis
-Install OpenCV on your laptop (a Mac in my case) first as its much easier to play with the code that way. Then when you have some working code you want to test on the Pi, `scp` it across and give it a go...
-
-## Install OpenCV3 with Python3 bindings on MAC OSX
-To install OpenCV3 on your mac is not as simple as most other online tutorials make out. I tried building from source as we did with the Pi above but couldn't get it to work - probably because I'm using the Anaconda package manager for python. I kept getting errors around HDF5 at various stages. I eventually got it to compile fine but when I `import cv2` into python it couldn't find the hp5f related libraries. I'm just not interested in sort that sort of nonsense out when you can use `conda`!
-
-### Anaconda
-If you are using Anaconda (or miniconda) - which I highly recommend - then you can install OpenCV3 with the following command:
-```
-conda install -c menpo opencv3=3.1.0
-```
-The menpo project on anaconda have allot Machine Learning and Computer Vision related libraries.
-So if you can find the library you're looking for with `conda search opencv3` for example then search over at anacond.org (Ensure that the library is available for linux or OSX depending on where you're working).
-
-Anaconda keeps your python environments separate from the system environment, just like virtualenv does, but I think its a little friendlier to use.
-
-### Docker
-Now - even though I've gone on about installing OpenCV on my Mac above, it was mainly a learning exercise. I actually think its better to use docker containers where you can spin up different environment willy-nilly.
-Check out the docker images at
-+ https://github.com/Kaixhin/dockerfiles
-+ https://github.com/jupyter/docker-stacks
-
-These are both great repositories of docker files (they auto build onto docker hub as well).
-
-The Kaixhin docker files are more aimed at machine learning tasks. The [Jupyter](http://jupyter.org/) docker files are more aimed at general purpose scientific python and include a running Jupyter server. Jupyter notebooks if you haven't seen them are a beautiful mesh of Python and web pages - you effectively code in a notebook which can easily be shared. Almost like a presentation.
-
-![Jupyter notebook](/assets/pi/jupyterpreview.png "Jupyter Notebook")
-
-### To Do
-I intend to use these as a base for building my own soon...!?!@#$
-
-I like the way Jupyter setup there docker files and they take care of some issues relating to user access, but I also am more used to using Ubuntu instead of Debian; so I might transfer their docker file onto Ubuntu then install OpenCV (via anaconda as I did above but the linux variant) and BAM! We have a nice docker image to play with OpenCV3.
+# Next...
+Now that we have the camera up and running on our pi, I'm going to switch  to working on my laptop. When writing code its just waaaaay easier to play on the laptop than directly on the pi. We can get our image processing code working and then when happy, move it to the Pi.
