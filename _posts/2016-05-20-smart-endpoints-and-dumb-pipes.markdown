@@ -2,7 +2,7 @@
 layout: post
 comments: true
 title:  "Smart end-points and dumb pipes"
-excerpt: "Are we doing integration wrong? Bulding business logic into interfaces and creating dependencies on bigger and bigger integration teams."
+excerpt: "Are we doing integration wrong? Building business logic into interfaces and creating dependencies on bigger and bigger integration teams."
 date:   2014-09-10 09:00:00
 mathjax: false
 ---
